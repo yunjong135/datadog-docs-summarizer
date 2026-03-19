@@ -10,7 +10,8 @@ export async function searchDocs(query) {
     const errorData = await response.json().catch(() => ({}))
     throw new Error(errorData.detail ?? `검색 실패: ${response.status}`)
   }
-  return response.json()
+  const data = await response.json()
+  return data.results
 }
 
 export async function summarizeDoc(url) {
