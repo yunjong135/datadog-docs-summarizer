@@ -25,6 +25,10 @@
           trackResources: true,
           trackLongTasks: true,
           defaultPrivacyLevel: 'mask-user-input',
+          allowedTracingUrls: [
+            { match: 'http://52.79.146.252', propagatorTypes: ['datadog'] },
+            { match: /https:\/\/.*\.datadoghq\.com/, propagatorTypes: ['datadog'] },
+          ],
         })
       })
     </script>
