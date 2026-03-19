@@ -1,9 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
 
-import ddtrace
-from ddtrace.contrib.fastapi import TraceMiddleware
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
@@ -12,7 +9,7 @@ from dotenv import load_dotenv
 from search import search_docs
 from summarizer import summarize_doc
 
-# Datadog 로그 설정
+# Datadog 로그 설정 (ddtrace-run이 자동으로 APM 패치)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s %(message)s"
@@ -72,7 +69,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(TraceMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
