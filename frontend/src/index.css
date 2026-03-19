@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .spinner {
+    @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+  }
+  .spinner-lg {
+    @apply w-8 h-8 border-[3px];
+  }
+  .btn-primary {
+    @apply bg-dd-purple hover:bg-dd-purple-dark active:bg-dd-purple-dark
+           text-white font-medium px-5 py-2.5 rounded-lg
+           transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-dd-purple focus:ring-offset-2;
+  }
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+  }
+  .result-item {
+    @apply p-4 border-b border-gray-100 last:border-0 cursor-pointer
+           hover:bg-dd-purple-bg transition-colors duration-100;
+  }
+  .result-item.selected {
+    @apply bg-dd-purple-bg border-l-4 border-l-dd-purple;
+  }
+}
+
+.markdown-body h1 { @apply text-xl font-bold mt-4 mb-2 text-gray-900; }
+.markdown-body h2 { @apply text-lg font-bold mt-3 mb-2 text-gray-900; }
+.markdown-body h3 { @apply text-base font-semibold mt-3 mb-1 text-gray-800; }
+.markdown-body p  { @apply mb-3 leading-relaxed text-gray-700; }
+.markdown-body ul { @apply list-disc pl-5 mb-3 space-y-1 text-gray-700; }
+.markdown-body ol { @apply list-decimal pl-5 mb-3 space-y-1 text-gray-700; }
+.markdown-body li { @apply leading-relaxed; }
+.markdown-body code {
+  @apply bg-gray-100 text-dd-purple text-sm px-1.5 py-0.5 rounded font-mono;
+}
+.markdown-body pre {
+  @apply bg-gray-900 text-gray-100 rounded-lg p-4 mb-3 overflow-x-auto text-sm;
+}
+.markdown-body pre code {
+  @apply bg-transparent text-gray-100 p-0;
+}
+.markdown-body a  { @apply text-dd-purple underline hover:text-dd-purple-dark; }
+.markdown-body blockquote {
+  @apply border-l-4 border-dd-purple pl-4 italic text-gray-600 mb-3;
+}
+.markdown-body strong { @apply font-semibold text-gray-900; }
+.markdown-body hr { @apply border-gray-200 my-4; }
