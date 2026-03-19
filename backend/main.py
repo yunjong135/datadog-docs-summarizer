@@ -1,4 +1,8 @@
+import logging
 from contextlib import asynccontextmanager
+
+import ddtrace
+from ddtrace.contrib.fastapi import TraceMiddleware
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,6 +11,13 @@ from dotenv import load_dotenv
 
 from search import search_docs
 from summarizer import summarize_doc
+
+# Datadog 로그 설정
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -61,6 +72,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(TraceMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -77,27 +89,37 @@ def health_check():
 
 @app.post("/api/search", response_model=SearchResponse, tags=["Docs"])
 def search(request: SearchRequest):
+    logger.info("search query=%s", request.query)
     try:
         results = search_docs(request.query)
+        logger.info("search results=%d query=%s", len(results), request.query)
         return SearchResponse(results=results)
     except ValueError as exc:
+        logger.warning("search invalid query=%s error=%s", request.query, exc)
         raise HTTPException(status_code=422, detail=str(exc))
     except RuntimeError as exc:
+        logger.error("search failed query=%s error=%s", request.query, exc)
         raise HTTPException(status_code=502, detail=str(exc))
     except Exception as exc:
+        logger.exception("search unexpected error query=%s", request.query)
         raise HTTPException(status_code=500, detail=f"검색 중 오류가 발생했습니다: {exc}")
 
 
 @app.post("/api/summarize", response_model=SummarizeResponse, tags=["Docs"])
 def summarize(request: SummarizeRequest):
+    logger.info("summarize url=%s", request.url)
     try:
         result = summarize_doc(request.url)
+        logger.info("summarize done url=%s", request.url)
         return SummarizeResponse(**result)
     except ValueError as exc:
+        logger.warning("summarize invalid url=%s error=%s", request.url, exc)
         raise HTTPException(status_code=422, detail=str(exc))
     except RuntimeError as exc:
+        logger.error("summarize failed url=%s error=%s", request.url, exc)
         raise HTTPException(status_code=502, detail=str(exc))
     except Exception as exc:
+        logger.exception("summarize unexpected error url=%s", request.url)
         raise HTTPException(status_code=500, detail=f"요약 중 오류가 발생했습니다: {exc}")
 
 
